@@ -1,10 +1,12 @@
-package com.example.advice;
+package com.confessionwall.dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdviceDao {
+import com.confessionwall.model.AdviceModel;
+
+public class AdviceDAO {
 
     public boolean createAdvice(String content, int userId) {
         String sql = "INSERT INTO advice(content, likes, user_id, created_at) VALUES (?, 0, ?, NOW())";
@@ -23,8 +25,8 @@ public class AdviceDao {
         }
     }
 
-    public List<Advice> getAllAdvice() {
-        List<Advice> list = new ArrayList<>();
+    public List<AdviceModel> getAllAdvice() {
+        List<AdviceModel> list = new ArrayList<>();
 
         String sql = "SELECT id, content, likes, created_at FROM advice ORDER BY created_at DESC";
 
@@ -33,7 +35,7 @@ public class AdviceDao {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                list.add(new Advice(
+                list.add(new AdviceModel(
                         rs.getInt("id"),
                         rs.getString("content"),
                         rs.getInt("likes"),

@@ -1,12 +1,12 @@
-package com.example.advice;
+package com.confessionwall.model;
 
-public class Advice {
+public class AdviceModel {
     private int id;
     private String content;
     private int likes;
     private String createdAt;
 
-    public Advice(int id, String content, int likes, String createdAt) {
+    public AdviceModel(int id, String content, int likes, String createdAt) {
         this.id = id;
         this.content = content;
         this.likes = likes;
