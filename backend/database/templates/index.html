@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Anonymous Confession Wall</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f9; padding: 20px; }
+        .card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .user { font-weight: bold; color: #555; }
+    </style>
+</head>
+<body>
+<h1>Confession Wall</h1>
+<div th:each="c : ${allConfessions}" class="card">
+    <p th:text="${c.content}"></p>
+    <small class="user">Posted by: <span th:text="${c.user.username}"></span></small>
+    <br>
+    <small>Likes: <span th:text="${c.likes}"></span></small>
+</div>
+</body>
+</html>

@@ -1,91 +1,83 @@
-import { createContext, useContext, useState, useEffect } from 'react'
-import { authAPI } from '../services/api'
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const AuthContext = createContext()
+const AuthContext = createContext(null);
+
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    checkSession()
-  }, [])
-
-  const checkSession = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/session`, {
-        credentials: 'include'
-      })
-      
-      if (response.ok) {
-        const userData = await response.json()
-        setUser(userData)
-        localStorage.setItem('user', JSON.stringify(userData))
-      }
-    } catch (err) {
-      console.error('Session check failed:', err)
-    } finally {
-      setLoading(false)
+    // Check for saved user on load
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
     }
-  }
+    setLoading(false);
+  }, []);
 
-  const login = async (credentials) => {
-    setLoading(true)
-    setError(null)
-    try {
-      const userData = await authAPI.login(credentials)
-      setUser(userData)
-      localStorage.setItem('user', JSON.stringify(userData))
-      return { success: true, data: userData }
-    } catch (err) {
-      setError(err.message)
-      return { success: false, error: err.message }
-    } finally {
-      setLoading(false)
-    }
-  }
+  const generateId = () => `Anonymous #${Math.floor(Math.random() * 9000) + 1000}`;
 
-  const register = async (userData) => {
-    setLoading(true)
-    setError(null)
-    try {
-      const result = await authAPI.register(userData)
-      setUser(result)
-      localStorage.setItem('user', JSON.stringify(result))
-      return { success: true, data: result }
-    } catch (err) {
-      setError(err.message)
-      return { success: false, error: err.message }
-    } finally {
-      setLoading(false)
-    }
-  }
+  const login = (username, password) => {
+    // Simulate login API call
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // For this mock, we just check if a user exists in localStorage "db"
+        const users = JSON.parse(localStorage.getItem('users_db') || '[]');
+        const foundUser = users.find(u => u.username === username && u.password === password);
 
-  const logout = async () => {
-    try {
-      await authAPI.logout()
-    } catch (err) {
-      console.error('Logout error:', err)
-    } finally {
-      setUser(null)
-      localStorage.removeItem('user')
-    }
-  }
+        if (foundUser) {
+          // Ensure legacy users get an ID if missing
+          const anonymousId = foundUser.anonymousId || generateId();
+          const userSession = { username: foundUser.username, anonymousId };
+
+          setUser(userSession);
+          localStorage.setItem('user', JSON.stringify(userSession));
+          resolve(userSession);
+        } else {
+          reject(new Error('Invalid credentials (try registering first!)'));
+        }
+      }, 500);
+    });
+  };
+
+  const register = (username, email, password) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const users = JSON.parse(localStorage.getItem('users_db') || '[]');
+        if (users.find(u => u.username === username)) {
+          reject(new Error('Username already taken'));
+          return;
+        }
+
+        const newUser = {
+          username,
+          email,
+          password,
+          anonymousId: generateId() // Assign persistent ID
+        };
+
+        users.push(newUser);
+        localStorage.setItem('users_db', JSON.stringify(users));
+
+        // Auto login after register
+        const userSession = { username: newUser.username, anonymousId: newUser.anonymousId };
+        setUser(userSession);
+        localStorage.setItem('user', JSON.stringify(userSession));
+        resolve(userSession);
+      }, 500);
+    });
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+  };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      loading, 
-      error,
-      login, 
-      register, 
-      logout,
-      isAuthenticated: !!user 
-    }}>
-      {children}
+    <AuthContext.Provider value={{ user, login, register, logout, loading, isAuthenticated: !!user }}>
+      {!loading && children}
     </AuthContext.Provider>
-  )
-}
-
-export const useAuth = () => useContext(AuthContext)
+  );
+};
