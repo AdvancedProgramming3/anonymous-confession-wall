@@ -8,22 +8,53 @@
 }
 
 :root {
-  --primary-color: #4a6fa5;
-  --secondary-color: #166088;
-  --accent-color: #4fc3a1;
-  --light-color: #f8f9fa;
-  --dark-color: #343a40;
-  --text-color: #333;
+  /* Light Theme Variables */
+  --primary-color: #508D69;
+  /* Tranquil Greenscape */
+  --secondary-color: #3A6351;
+  /* Darker green for gradients/hovers */
+  --accent-color: #508D69;
+  --bg-color: #ffffff;
+  --card-bg: #ffffff;
+  --input-bg: #f8f9fa;
+  /* Light gray for inputs */
+  --text-color: #333333;
+  --text-secondary: #666666;
   --border-color: #dee2e6;
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --border-radius: 8px;
+  --border-radius: 12px;
+
+  /* Reaction Colors */
+  --heart-color: #ff6b6b;
+  --laugh-color: #feca57;
+  --cry-color: #54a0ff;
+  --thumb-color: #48dbfb;
+}
+
+[data-theme='dark'] {
+  /* Dark Theme Variables */
+  --primary-color: #508D69;
+  /* Keep brand color */
+  --secondary-color: #3A6351;
+  --accent-color: #6CAE75;
+  /* Lighter green for accents on dark */
+  --bg-color: #000000;
+  /* Pure black background */
+  --card-bg: #121212;
+  /* Very dark gray for contrast */
+  --input-bg: #1e1e1e;
+  --text-color: #e0e0e0;
+  --text-secondary: #aaaaaa;
+  --border-color: #333333;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
   line-height: 1.6;
   color: var(--text-color);
-  background-color: #f5f7fa;
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .app {
@@ -34,9 +65,9 @@ body {
 
 /* Header */
 .header {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: var(--primary-color);
   color: white;
-  padding: 1.5rem 0;
+  padding: 0.5rem 0;
   box-shadow: var(--shadow);
 }
 
@@ -47,21 +78,21 @@ body {
 }
 
 .logo {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.2rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .tagline {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   opacity: 0.9;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 /* Navigation */
 .navigation {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 .nav-menu {
@@ -100,11 +131,12 @@ body {
 }
 
 .page {
-  background: white;
+  background: var(--card-bg);
   border-radius: var(--border-radius);
   padding: 2rem;
   box-shadow: var(--shadow);
   animation: fadeIn 0.5s ease;
+  transition: background-color 0.3s ease;
 }
 
 @keyframes fadeIn {
@@ -112,6 +144,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -119,7 +152,7 @@ body {
 }
 
 h2 {
-  color: var(--secondary-color);
+  color: var(--primary-color);
   margin-bottom: 1.5rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--border-color);
@@ -138,6 +171,8 @@ h2 {
 }
 
 .confess-textarea {
+  background-color: var(--input-bg);
+  color: var(--text-color);
   width: 100%;
   padding: 1rem;
   border: 2px solid var(--border-color);
@@ -163,7 +198,7 @@ h2 {
 }
 
 .anonymous-note {
-  color: #666;
+  color: var(--text-secondary);
   font-style: italic;
 }
 
@@ -188,7 +223,7 @@ h2 {
 }
 
 .confession-card {
-  background: var(--light-color);
+  background: var(--card-bg);
   padding: 1rem;
   border-radius: var(--border-radius);
   margin-bottom: 1rem;
@@ -199,7 +234,7 @@ h2 {
   display: block;
   margin-top: 0.5rem;
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 /* Advice page */
@@ -276,7 +311,7 @@ h2 {
 
 .form-group label {
   font-weight: 600;
-  color: var(--dark-color);
+  color: var(--text-color);
 }
 
 .form-group input {
@@ -285,6 +320,8 @@ h2 {
   border-radius: var(--border-radius);
   font-size: 1rem;
   transition: border-color 0.3s ease;
+  background-color: var(--input-bg);
+  color: var(--text-color);
 }
 
 .form-group input:focus {
@@ -326,7 +363,7 @@ h2 {
 
 /* Footer */
 .footer {
-  background-color: var(--dark-color);
+  background-color: #1a1a1a;
   color: white;
   padding: 2rem 0;
   margin-top: auto;
@@ -347,28 +384,29 @@ h2 {
 
 /* Responsive */
 @media (max-width: 768px) {
+
   .header-content,
   .main {
     padding: 0 1rem;
   }
-  
+
   .logo {
     font-size: 2rem;
   }
-  
+
   .nav-menu {
     gap: 0.5rem;
   }
-  
+
   .nav-link {
     padding: 0.5rem;
     font-size: 1rem;
   }
-  
+
   .page {
     padding: 1.5rem;
   }
-  
+
   .form-footer {
     flex-direction: column;
     align-items: stretch;
