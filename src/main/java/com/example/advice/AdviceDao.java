@@ -1,25 +1,52 @@
 package com.example.advice;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class AdviceDao {
+public class AdviceDAO {
 
-    private static final String INSERT_SQL =
-            "INSERT INTO advice (content, likes, user_id, created_at) VALUES (?, 0, ?, NOW())";
+    public void insert(String content) throws Exception {
+        String sql = "INSERT INTO advice(content, likes, created_at) VALUES (?, 0, NOW())";
 
-    public boolean createAdvice(String content, int userId) {
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(INSERT_SQL)) {
+        try (Connection conn = DB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            ps.setString(1, content);
-            ps.setInt(2, userId);
+            stmt.setString(1, content);
+            stmt.executeUpdate();
+        }
+    }
 
-            return ps.executeUpdate() > 0;
+    public List<Advice> findAll() throws Exception {
+        String sql = "SELECT id, content, likes, created_at FROM advice ORDER BY created_at DESC";
+        List<Advice> list = new ArrayList<>();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+        try (Connection conn = DB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Advice a = new Advice(
+                        rs.getInt("id"),
+                        rs.getString("content"),
+                        rs.getInt("likes"),
+                        rs.getTimestamp("created_at").toLocalDateTime()
+                );
+                list.add(a);
+            }
+        }
+
+        return list;
+    }
+
+    public boolean like(int id) throws Exception {
+        String sql = "UPDATE advice SET likes = likes + 1 WHERE id = ?";
+        try (Connection conn = DB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            int changed = stmt.executeUpdate();
+            return changed == 1;
         }
     }
 }
