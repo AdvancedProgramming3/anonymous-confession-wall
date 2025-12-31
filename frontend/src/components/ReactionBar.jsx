@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 
 const REACTION_TYPES = [
-    { id: 'heart', emoji: '❤️', label: 'Love', color: 'var(--heart-color)' },
-    { id: 'laugh', emoji: '😂', label: 'Funny', color: 'var(--laugh-color)' },
-    { id: 'cry', emoji: '😢', label: 'Sad', color: 'var(--cry-color)' },
-    { id: 'thumb', emoji: '👍', label: 'Agree', color: 'var(--thumb-color)' }
+    { id: 'heart', emoji: '❤️', label: 'Love', color: 'var(--heart-color)' }
 ];
 
 const ReactionBar = ({ reactions = {}, onReact }) => {
@@ -57,7 +54,7 @@ const ReactionBar = ({ reactions = {}, onReact }) => {
                             fontWeight: isSelected ? 'bold' : 'normal',
                             color: isSelected ? type.color : 'inherit'
                         }}>
-                            {count + (isSelected ? 1 : 0)}
+                            {count}
                         </span>
                     </button>
                 );
