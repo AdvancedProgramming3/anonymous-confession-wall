@@ -1,27 +1,23 @@
-package com.example.confessionsapp.model;
+package com.confessionwall.model;
 
-public class User {
-    private Long id;
+public class UserModel {
+    private int id;
     private String username;
     private String password;
 
-    // Default constructor (required)
-    public User() {}
+    public UserModel() {}
 
-    // Constructor with parameters
-    public User(Long id, String username, String password) {
+    public UserModel(int id, String username, String password) {
         this.id = id;
         this.username = username;
         this.password = password;
     }
 
-    // Standard Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
+    // Getters and Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
-
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 }
