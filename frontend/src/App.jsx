@@ -1,158 +1,11 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { ThemeProvider, ThemeContext, useTheme } from './context/ThemeContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ThemeToggle from './components/ThemeToggle';
-import ConfessionItem from './components/ConfessionItem';
 import './App.css';
 
-// Initial Mock Data
-const INITIAL_CONFESSIONS = [
-  {
-    id: 1,
-    content: "I finally told my family about my career change after months of hesitation.",
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    author: "Anonymous #4821",
-    reactions: { heart: 5, thumb: 2 },
-    comments: [
-      { id: 1, text: "Proud of you! That takes courage.", author: "Anonymous #9312", createdAt: new Date().toISOString() }
-    ]
-  },
-  {
-    id: 2,
-    content: "I've been pretending to be happy at work, but I'm actually struggling with burnout.",
-    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-    author: "Anonymous #1539",
-    reactions: { cry: 8, heart: 3 },
-    comments: []
-  }
-];
-
-// Page Components
-function ConfessPage() {
-  const [confessions, setConfessions] = useState(INITIAL_CONFESSIONS);
-  const [newConfession, setNewConfession] = useState('');
-  const { user } = useAuth();
-
-  const navigate = useNavigate();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!newConfession.trim()) return;
-
-    if (!user) {
-      alert("Please login to post a confession!");
-      navigate('/login');
-      return;
-    }
-
-    const confession = {
-      id: Date.now(),
-      content: newConfession,
-      createdAt: new Date().toISOString(),
-      author: user.anonymousId,
-      reactions: {},
-      comments: []
-    };
-
-    setConfessions([confession, ...confessions]);
-    setNewConfession('');
-  };
-
-  const handleReact = (id, reactionId, delta) => {
-    setConfessions(prev => prev.map(confession => {
-      if (confession.id === id) {
-        const currentCount = confession.reactions[reactionId] || 0;
-        return {
-          ...confession,
-          reactions: {
-            ...confession.reactions,
-            [reactionId]: Math.max(0, currentCount + delta)
-          }
-        };
-      }
-      return confession;
-    }));
-  };
-
-  const handleComment = (id, text) => {
-    setConfessions(prev => prev.map(confession => {
-      if (confession.id === id) {
-        return {
-          ...confession,
-          comments: [
-            ...confession.comments,
-            {
-              id: Date.now(),
-              text,
-              author: user ? user.anonymousId : 'Anonymous',
-              createdAt: new Date().toISOString()
-            }
-          ]
-        };
-      }
-      return confession;
-    }));
-  };
-
-  return (
-    <div className="confess-page fade-in">
-      {/* Intro Section */}
-      <section className="intro-section" style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <h2>Share Your Secrets, Anonymously</h2>
-        <p>A safe space to unburden your mind completely anonymously.</p>
-      </section>
-
-      <div className="confess-container">
-        {/* Post Form */}
-        <div className="card form-card">
-          <form onSubmit={handleSubmit} className="confess-form">
-            <textarea
-              className="confess-textarea"
-              placeholder={user ? "What's on your mind? (Your identity is hidden)" : "Please login to share your secret..."}
-              value={newConfession}
-              onChange={(e) => setNewConfession(e.target.value)}
-              disabled={!user}
-            />
-            <div className="form-footer">
-              <span className="anonymous-note">
-                <span style={{ fontSize: '1.2rem', marginRight: '0.5rem' }}>🔒</span>
-                {user ? `Posting as ${user.anonymousId}` : 'Login required to post'}
-              </span>
-              <button
-                type="submit"
-                className="submit-btn"
-                disabled={!newConfession.trim() || !user}
-                style={{ opacity: user ? 1 : 0.6 }}
-              >
-                Confess
-              </button>
-            </div>
-            {!user && (
-              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                <Link to="/login" style={{ color: 'var(--primary-color)', fontWeight: 'bold' }}>Login</Link> or <Link to="/register" style={{ color: 'var(--primary-color)', fontWeight: 'bold' }}>Register</Link> to participate.
-              </div>
-            )}
-          </form>
-        </div>
-
-        {/* Confession Feed */}
-        <div className="recent-confessions">
-          <h3 style={{ marginBottom: '1.5rem', color: 'var(--primary-color)' }}>Recent Confessions</h3>
-          {confessions.map(confession => (
-            <ConfessionItem
-              key={confession.id}
-              confession={confession}
-              onReact={handleReact}
-              onComment={handleComment}
-              currentUser={user}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+import Confessions from './pages/Confessions'; 
 
 function LoginPage() {
   const [username, setUsername] = useState('');
@@ -285,20 +138,19 @@ function RegisterPage() {
   );
 }
 
+import { useState } from 'react';
+
 function AppContent() {
   const { theme } = useTheme();
   const { user, logout } = useAuth();
-  // ... rest of function
-
 
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'dark-mode' : '';
   }, [theme]);
 
-  // Handle logout via context
   const handleLogout = () => {
     logout();
-    window.location.href = '/'; // Force clear/redirect
+    window.location.href = '/'; 
   };
 
   return (
@@ -347,7 +199,8 @@ function AppContent() {
 
       <main className="main">
         <Routes>
-          <Route path="/" element={<ConfessPage />} />
+          <Route path="/" element={<Confessions />} />
+          
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
         </Routes>
