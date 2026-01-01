@@ -5,21 +5,19 @@ const REACTION_TYPES = [
 ];
 
 const ReactionBar = ({ reactions = {}, onReact }) => {
-    // Local state to track user's selection (simulated for now)
     const [selectedReaction, setSelectedReaction] = useState(null);
 
     const handleReaction = (typeId) => {
-        // If clicking same reaction, remove it (toggle off)
         if (selectedReaction === typeId) {
             setSelectedReaction(null);
-            onReact(typeId, -1); // Decrement
+            onReact(typeId, -1); 
         } else {
-            // If switching reaction
+            
             if (selectedReaction) {
-                onReact(selectedReaction, -1); // Decrement old
+                onReact(selectedReaction, -1); 
             }
             setSelectedReaction(typeId);
-            onReact(typeId, 1); // Increment new
+            onReact(typeId, 1); 
         }
     };
 

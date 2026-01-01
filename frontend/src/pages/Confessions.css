@@ -67,29 +67,30 @@
 
 .confession-form-container {
   margin-bottom: 40px;
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 12px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px var(--shadow-color);
   padding: 20px;
+  transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 .form-header {
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .form-header h3 {
   font-size: 1.5rem;
   margin-bottom: 8px;
-  color: #1a1a1a;
+  color: var(--text-primary);
 }
 
 .form-subtitle {
   display: flex;
   gap: 20px;
-  color: #65676b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 

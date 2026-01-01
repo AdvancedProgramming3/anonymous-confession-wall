@@ -25,10 +25,8 @@ const Confessions = () => {
     try {
       let data
       if (useMockData) {
-        // Use mock data for development
         data = mockData.confessions
       } else {
-        // Use real API
         data = await confessionsAPI.getAll()
       }
       setConfessions(data)
@@ -36,7 +34,6 @@ const Confessions = () => {
       console.error('Failed to fetch confessions:', err)
       setError('Failed to load confessions. Please try again.')
       
-      // Fallback to mock data
       setUseMockData(true)
       setConfessions(mockData.confessions)
     } finally {
@@ -64,7 +61,6 @@ const Confessions = () => {
     try {
       let newPost
       if (useMockData) {
-        // Mock post creation
         newPost = {
           id: confessions.length + 1,
           content: newConfession,
@@ -73,7 +69,6 @@ const Confessions = () => {
           isAnonymous: true
         }
       } else {
-        // Real API call
         newPost = await confessionsAPI.create(newConfession)
       }
       
@@ -81,7 +76,6 @@ const Confessions = () => {
       setNewConfession('')
       setSuccess('Confession posted successfully!')
       
-      // Clear success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000)
     } catch (err) {
       console.error('Failed to post confession:', err)
@@ -91,28 +85,38 @@ const Confessions = () => {
     }
   }
 
-  const handleLike = async (confessionId) => {
+  const handleLike = async (confessionId, delta = 1) => {
     if (!isAuthenticated) {
       setError('Please login to like confessions')
       return
     }
     
+    setConfessions(currentConfessions => 
+      currentConfessions.map(confession => 
+        confession.id === confessionId 
+          ? { ...confession, likes: Math.max(0, (confession.likes || 0) + delta) }
+          : confession
+      )
+    )
+    
     try {
-      if (useMockData) {
-        // Mock like functionality
-        setConfessions(confessions.map(confession => 
-          confession.id === confessionId 
-            ? { ...confession, likes: confession.likes + 1 }
-            : confession
-        ))
-      } else {
-        // Real API call
-        await confessionsAPI.like(confessionId)
-        fetchConfessions() // Refresh to get updated likes
+      if (!useMockData) {
+        if (delta > 0) {
+          await confessionsAPI.like(confessionId)
+        } else {
+          await confessionsAPI.unlike(confessionId)
+        }
       }
     } catch (err) {
-      console.error('Failed to like confession:', err)
-      setError('Failed to like confession. Please try again.')
+      console.error('Failed to update like:', err)
+      
+      setConfessions(currentConfessions => 
+        currentConfessions.map(confession => 
+          confession.id === confessionId 
+            ? { ...confession, likes: (confession.likes || 0) - delta }
+            : confession
+        )
+      )
     }
   }
 

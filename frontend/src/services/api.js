@@ -59,7 +59,10 @@ export const confessionsAPI = {
     body: JSON.stringify({ content }),
   }),
 
-  like: (id) => apiRequest(`/confessions/${id}/like`, {
+  like: (id) => apiRequest(`/confessions/likes?id=${id}`, {
+    method: 'POST',
+  }),
+   unlike: (id) => apiRequest(`/confessions/likes?id=${id}&action=unlike`, {
     method: 'POST',
   }),
 
@@ -79,7 +82,7 @@ export const adviceAPI = {
     body: JSON.stringify({ content }),
   }),
 
-  like: (id) => apiRequest(`/advice/${id}/like`, {
+  like: (id) => apiRequest(`/advice/likes?id=${id}`, {
     method: 'POST',
   }),
 
