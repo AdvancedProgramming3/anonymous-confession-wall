@@ -55,6 +55,7 @@ A simple web application for users to register, log in, and post anonymous confe
 | likes      | INT       | Default 0               |
 | user_id    | INT (FK)  | References users        |
 | created_at | TIMESTAMP | Auto                    |
+| confession_id | INT (FK) | References confession |
 
 **Note:** `user_id` is never exposed in API responses for anonymity.
 
