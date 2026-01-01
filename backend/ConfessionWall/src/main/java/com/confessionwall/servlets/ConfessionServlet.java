@@ -40,22 +40,26 @@ public class ConfessionServlet extends HttpServlet {
     }
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String requestBody = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-		
-		ConfessionModel newConfession = gson.fromJson(requestBody, ConfessionModel.class);
-		if(newConfession.getUserId() == 0) {
-			newConfession.setUserId(1);
-		}
-		
-		confessionDAO.addConfession(newConfession);
-		
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
-		response.setStatus(HttpServletResponse.SC_CREATED); 
-		
-		response.getWriter().write("{\"message\": \"Confession created successfully\"}");
-		
+		HttpSession session = request.getSession(false);
+
+		// Day 2: Login required check
+		if (session == null || session.getAttribute("userId") == null) {
+			response.setStatus(401);
+			response.getWriter().write("{\"error\": \"You must be logged in to post\"}");
+			return;
+		}
+
+		int userId = (int) session.getAttribute("userId");
+		String content = request.getParameter("content");
+
+		ConfessionModel confession = new ConfessionModel();
+		confession.setContent(content);
+		confession.setUserId(userId); // Use the ID from the session!
+
+		confessionDAO.addConfession(confession);
+		response.getWriter().write("{\"message\": \"Confession added\"}");
 	}
 
 }
