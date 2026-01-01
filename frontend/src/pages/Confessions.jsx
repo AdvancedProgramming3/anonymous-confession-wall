@@ -59,20 +59,22 @@ const Confessions = () => {
     setSuccess(null)
     
     try {
-      let newPost
       if (useMockData) {
-        newPost = {
+        const newPost = {
           id: confessions.length + 1,
           content: newConfession,
           likes: 0,
           createdAt: new Date().toISOString(),
-          isAnonymous: true
+          isAnonymous: true,
+          userId: 1
         }
+        setConfessions([newPost, ...confessions])
       } else {
-        newPost = await confessionsAPI.create(newConfession)
+        await confessionsAPI.create(newConfession)
+        
+        await fetchConfessions()
       }
       
-      setConfessions([newPost, ...confessions])
       setNewConfession('')
       setSuccess('Confession posted successfully!')
       
