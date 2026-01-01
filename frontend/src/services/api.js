@@ -75,14 +75,20 @@ export const confessionsAPI = {
 export const adviceAPI = {
   getAll: () => apiRequest('/advice'),
 
+  getByConfessionId: (confessionId) => apiRequest(`/advice?confessionId=${confessionId}`),
+
   getById: (id) => apiRequest(`/advice/${id}`),
 
-  create: (content) => apiRequest('/advice', {
+  create: (content, confessionId) => apiRequest('/advice', {
     method: 'POST',
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ content, confessionId }),
   }),
 
   like: (id) => apiRequest(`/advice/likes?id=${id}`, {
+    method: 'POST',
+  }),
+
+  unlike: (id) => apiRequest(`/advice/likes?id=${id}&action=unlike`, {
     method: 'POST',
   }),
 

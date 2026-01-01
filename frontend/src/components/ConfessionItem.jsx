@@ -6,19 +6,14 @@ import './ConfessionItem.css'
 const ConfessionItem = ({ confession, onLike, onShare, currentUser }) => {
   const [showComments, setShowComments] = useState(false);
 
- 
+  // Data bridge for ReactionBar
   const reactionData = {
     heart: confession.likes || 0
   };
 
+  // Logic bridge for ReactionBar
   const handleReactBridge = (reactionId, delta) => {
-    
-      onLike(confession.id, delta);
-    
-  };
-
-  const handleAddComment = (text) => {
-    console.log("Comment feature coming soon:", text);
+    onLike(confession.id, delta);
   };
 
   const formatDate = (dateString) => {
@@ -99,7 +94,8 @@ const ConfessionItem = ({ confession, onLike, onShare, currentUser }) => {
             }}
           >
             <span>💬</span>
-            {showComments ? 'Hide' : `Comments (${(confession.comments || []).length})`}
+            {/* We remove the count for now because the list API doesn't include it yet */}
+            {showComments ? 'Hide Advice' : 'Give Advice'}
           </button>
           
           <button 
@@ -110,6 +106,7 @@ const ConfessionItem = ({ confession, onLike, onShare, currentUser }) => {
                color: 'var(--text-secondary)',
                cursor: 'pointer'
              }}
+             title="Share"
           >
             🔗
           </button>
@@ -118,8 +115,8 @@ const ConfessionItem = ({ confession, onLike, onShare, currentUser }) => {
 
       {showComments && (
         <CommentSection
-          comments={confession.comments || []}
-          onAddComment={handleAddComment}
+          // FIX: Pass the ID so CommentSection can GET the data
+          confessionId={confession.id}
           currentUser={currentUser}
         />
       )}
