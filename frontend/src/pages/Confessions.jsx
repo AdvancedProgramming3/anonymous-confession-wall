@@ -297,6 +297,7 @@ const Confessions = () => {
                   confession={confession}
                   onLike={handleLike}
                   onShare={() => handleShare(confession)}
+                  currentUser={isAuthenticated ? {} : null}
                 />
               ))}
             </div>
