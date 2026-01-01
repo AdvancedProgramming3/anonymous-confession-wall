@@ -1,38 +1,58 @@
-package com.example.advice;
+package com.confessionwall.servlets;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import com.confessionwall.dao.AdviceDAO;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
-@WebServlet("/api/advice/like")
+@WebServlet("/api/advice/likes")
 public class AdviceLikeServlet extends HttpServlet {
-
-    private AdviceDao adviceDao = new AdviceDao();
+    private static final long serialVersionUID = 1L;
+    private AdviceDAO adviceDAO;
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    public void init() {
+        adviceDAO = new AdviceDAO();
+    }
 
-        resp.setContentType("application/json");
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String idParam = request.getParameter("id");
+        String action = request.getParameter("action");
 
-        String idStr = req.getParameter("id");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-        if (idStr == null) {
-            resp.setStatus(400);
-            resp.getWriter().write("{\"error\":\"id is required\"}");
+        if (idParam == null || idParam.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Missing id parameter\"}");
             return;
         }
 
-        int id = Integer.parseInt(idStr);
+        try {
+            int id = Integer.parseInt(idParam);
 
-        boolean ok = adviceDao.likeAdvice(id);
+            if ("unlike".equals(action)) {
+                adviceDAO.decrementLikes(id);
+                response.getWriter().write("{\"message\": \"Advice like removed\"}");
+            } else {
+                adviceDAO.incrementLikes(id);
+                response.getWriter().write("{\"message\": \"Advice like added\"}");
+            }
 
-        if (ok) {
-            resp.getWriter().write("{\"message\":\"liked\"}");
-        } else {
-            resp.setStatus(404);
-            resp.getWriter().write("{\"error\":\"Advice not found\"}");
+            response.setStatus(HttpServletResponse.SC_OK);
+
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Invalid ID format\"}");
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
         }
     }
 }

@@ -1,20 +1,33 @@
 package com.confessionwall.model;
 
+import java.sql.Timestamp;
+
 public class AdviceModel {
     private int id;
     private String content;
     private int likes;
-    private String createdAt;
+    private int userId;
+    private Timestamp createdAt;
 
-    public AdviceModel(int id, String content, int likes, String createdAt) {
-        this.id = id;
+    public AdviceModel() {}
+
+    public AdviceModel(String content, int userId) {
         this.content = content;
-        this.likes = likes;
-        this.createdAt = createdAt;
+        this.userId = userId;
     }
 
     public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
     public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+
     public int getLikes() { return likes; }
-    public String getCreatedAt() { return createdAt; }
+    public void setLikes(int likes) { this.likes = likes; }
+
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
+
+    public Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
 }
